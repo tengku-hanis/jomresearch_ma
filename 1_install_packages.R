@@ -7,4 +7,5 @@
 # Install packages
 install.packages("meta")
 install.packages("devtools")
+install.packages("boot")
 devtools::install_github("MathiasHarrer/dmetar", upgrade = "never")

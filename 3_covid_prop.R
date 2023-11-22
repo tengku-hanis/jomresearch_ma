@@ -20,7 +20,7 @@ ma_covid <- metaprop(event = cases,
                      n = total,
                      studlab = authoryear,
                      data = covid_data,
-                     method = "GLMM", #estimator
+                     method = "GLMM", #method of pooling
                      sm = "PLOGIT", #logit transformation
                      fixed = T, 
                      random = T,
@@ -40,6 +40,7 @@ funnel(ma_covid_RE, studlab = T, xlim = c(-5.5, 2.5))
 # Publication bias ----
 metabias(ma_covid_RE, plotit = T, method.bias = "Egger") #generic
 metabias(ma_covid_RE, plotit = T, method.bias = "Begg") #generic
+metabias(ma_covid_RE, plotit = T, method.bias = "Peters") #specific for binary outcome
 
 # Assess outlier (I^2 > 50%) ----
 find.outliers(ma_covid_RE) #cannot have NAs for this
@@ -73,15 +74,21 @@ funnel(tf, studlab = T)
 ma_sub <- update(ma_covid_RE, subgroup = group)
 ma_sub
 
-forest(ma_sub, sortvar = TE, bylab = "Group")
+forest(ma_sub, sortvar = TE, subgroup.name = "Group", fontsize = 8, spacing = 0.8)
 
 # Meta-regression (~ k > 10) ----
 ma_covid_reg <- metareg(ma_covid_RE, ~ group, 
                         hakn = T, 
                         intercept = T) 
 
-ma_covid_reg #effect estimate of age group >65 is expected to reduce by 0.1 compared to the <65 group
+ma_covid_reg 
 
+## Odds ratio (rarely presented in publication)
+cbind(OR = exp(coef(ma_covid_reg)), 
+      lowerCI = exp(ma_covid_reg$ci.lb),
+      UpperCI = exp(ma_covid_reg$ci.ub)) %>% 
+  round(digits = 2)
 
-
-
+#children had 3.95 higher odds of being asymptomatic COVID19 cases compared to overall population
+#elderly had 2.89 higher odds of being asymptomatic COVID19 cases compared to overall population (not significant)
+#pregnant women had 10.25 higher odds of being asymptomatic COVID19 cases compared to overall population

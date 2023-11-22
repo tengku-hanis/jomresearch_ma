@@ -78,16 +78,18 @@ funnel(tf, studlab = T)
 ma_sub <- update(ma_irt_RE, subgroup = age_gp)
 ma_sub
 
-forest(ma_sub, sortvar = TE, bylab = "Age group", label.left = "Favour IRT", label.right = "Favour control")
+forest(ma_sub, sortvar = TE, subgroup.name = "Age group", label.left = "Favour IRT", label.right = "Favour control")
 
 # Meta-regression (~ k > 10) ----
 ma_irt_reg <- metareg(ma_irt_RE, ~ age_gp, 
                       hakn = T, 
                       intercept = T) 
 
-ma_irt_reg #effect estimate of age group >65 is expected to reduce by 0.1 compared to the <65 group
+ma_irt_reg #effect estimate/SMD for age group <65 is expected to rise by 0.1 compared to the >65 group
+# effect estimate/SMD for age group <65 = -0.8980 + 0.1033
+# effect estimate/SMD for age group >65 = -0.8980
 
-## Bubble plot of meta-regression
+## Bubble plot of meta-regression (specific for mean difference)
 bubble(ma_irt_reg, lwd = 2, lty = 2, col.line = "red", ylim = c(-3.5, 2), regline = TRUE, 
        main = "Bubble plot of age group")
 mtext(line = 0.25, font = 3, 
