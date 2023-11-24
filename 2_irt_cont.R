@@ -25,7 +25,7 @@ ma_irt <- metacont(n.e = n.e,
                    studlab = studyID,
                    data = irt_data,
                    method.tau = "REML", #estimator
-                   sm = "SMD", #by default hedges' g
+                   sm = "MD", 
                    fixed = T, 
                    random = T,
                    prediction = T, 
@@ -40,12 +40,14 @@ ma_irt_RE <- update(ma_irt, fixed = F)
 forest(ma_irt_RE, sortvar = TE, label.left = "Favour IRT", label.right = "Favour control")
 
 # Funnel plot ----
-funnel(ma_irt_RE, studlab = T, xlim = c(-3.5, 1.5))
+funnel(ma_irt_RE, studlab = T)
 
 # Publication bias ----
-metabias(ma_irt_RE, plotit = T, method.bias = "Egger") #generic, increase false positive dt hedges' g
+metabias(ma_irt_RE, plotit = T, method.bias = "Egger") #generic
 metabias(ma_irt_RE, plotit = T, method.bias = "Begg") #generic
 metabias(ma_irt_RE, plotit = T, method.bias = "Pustejovsky") #specific for cont outcome
+# 2 out of 3 test are significant, p < 0.05
+# So we conclude that our model has a publication bias
 
 # Assess outlier (I^2 > 50%) ----
 find.outliers(ma_irt_RE) #cannot have NAs for this
@@ -62,7 +64,9 @@ plot(ma_inf, "influence") #a bit advanced
 
 
 # SECTION 2: Publication bias ----------------------------------------------
-# For significant publication bias (our model not significant)
+# For significant publication bias 
+# There is significant publication bias in our model
+# I^2 is high in our model, by right this method is not appropriate
 
 # Trim and fill method (I^2 should be low) ----
 tf <- trimfill(ma_irt_RE)
@@ -85,12 +89,13 @@ ma_irt_reg <- metareg(ma_irt_RE, ~ age_gp,
                       hakn = T, 
                       intercept = T) 
 
-ma_irt_reg #effect estimate/SMD for age group <65 is expected to rise by 0.1 compared to the >65 group
-# effect estimate/SMD for age group <65 = -0.8980 + 0.1033
-# effect estimate/SMD for age group >65 = -0.8980
+ma_irt_reg #age_gp is not significantly influence our effect size
+# effect estimate/SMD for age group <65 is expected to rise by 0.1 compared to the >65 group
+# effect estimate/SMD for age group <65 = -7.6980 + 1.9576
+# effect estimate/SMD for age group >65 = -7.6980
 
 ## Bubble plot of meta-regression (specific for mean difference)
-bubble(ma_irt_reg, lwd = 2, lty = 2, col.line = "red", ylim = c(-3.5, 2), regline = TRUE, 
+bubble(ma_irt_reg, lwd = 2, lty = 2, col.line = "red", regline = TRUE, 
        main = "Bubble plot of age group")
 mtext(line = 0.25, font = 3, 
       "(The treatment is effective as the mean difference moves towards negative value)")

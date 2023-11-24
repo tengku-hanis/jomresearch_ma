@@ -64,7 +64,7 @@ plot(ma_inf, "influence") #a bit advanced
 tf <- trimfill(ma_covid_RE)
 tf
 
-funnel(tf, studlab = T)
+funnel(tf, studlab = T, xlim = c(-12, 3))
 
 
 # SECTION 3: Heterogeneity ------------------------------------------------
@@ -88,7 +88,6 @@ cbind(OR = exp(coef(ma_covid_reg)),
       lowerCI = exp(ma_covid_reg$ci.lb),
       UpperCI = exp(ma_covid_reg$ci.ub)) %>% 
   round(digits = 2)
-
-#children had 3.95 higher odds of being asymptomatic COVID19 cases compared to overall population
-#elderly had 2.89 higher odds of being asymptomatic COVID19 cases compared to overall population (not significant)
-#pregnant women had 10.25 higher odds of being asymptomatic COVID19 cases compared to overall population
+# children had 3.95 higher odds of being asymptomatic COVID19 cases compared to overall population
+# elderly had 2.89 higher odds of being asymptomatic COVID19 cases compared to overall population (not significant)
+# pregnant women had 10.25 higher odds of being asymptomatic COVID19 cases compared to overall population
